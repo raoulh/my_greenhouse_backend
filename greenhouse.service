@@ -1,0 +1,13 @@
+[Unit]
+Description=Greenhouse Backend
+After=syslog.target
+After=network.target
+After=postgresql.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/greenhouse_backend
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
