@@ -42,7 +42,8 @@ func Init() (err error) {
 func migrateDb() {
 	//Migrate all tables
 	db.AutoMigrate(
-		&AuthToken{},
+		&User{},
+		&UnitMeasurements{},
 	)
 
 	logging.Infof("Migration did run successfully")

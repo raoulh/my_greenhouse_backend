@@ -32,7 +32,7 @@ func (a *AppServer) apiLogin(c *fiber.Ctx) (err error) {
 }
 
 func (a *AppServer) apiLogout(c *fiber.Ctx) (err error) {
-	u := new(models.AuthToken)
+	u := new(models.User)
 
 	if err := c.BodyParser(u); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

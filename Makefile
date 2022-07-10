@@ -4,7 +4,7 @@ GOVET=$(GOCMD) vet
 BINARY_NAME=greenhouse_backend
 VERSION?=0.0.0
 
-SRV_DEPLOY=192.168.0.xxx
+SRV_DEPLOY=192.168.0.27
 
 GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
