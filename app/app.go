@@ -72,6 +72,9 @@ func NewApp() (a *AppServer, err error) {
 	api.Get("/data/full", func(c *fiber.Ctx) error {
 		return a.apiGetDataFull(c)
 	})
+	api.Get("/data/refresh", func(c *fiber.Ctx) error {
+		return a.apiDataRefresh(c)
+	})
 
 	return
 }

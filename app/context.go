@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func NewTokenMiddleware() func(*fiber.Ctx) {
-	return func(c *fiber.Ctx) {
+func NewTokenMiddleware() fiber.Handler {
+	return func(c *fiber.Ctx) error {
 		var token string
 		var deviceID string
 
@@ -38,6 +38,6 @@ func NewTokenMiddleware() func(*fiber.Ctx) {
 			}
 		}
 
-		c.Next()
+		return c.Next()
 	}
 }

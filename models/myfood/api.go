@@ -28,7 +28,6 @@ type apiOptions struct {
 func SetTimeout(timeout time.Duration) func(*apiOptions) {
 	return func(opts *apiOptions) {
 		opts.timeout = timeout
-		return
 	}
 }
 
@@ -93,18 +92,6 @@ func NewMyFoodApi(host string, options ...func(*apiOptions)) *MyFoodApi {
 			Transport: tr,
 		},
 	}
-}
-
-type requestOptions struct{}
-
-type MyFoodApiOption func(*requestOptions)
-
-func (duoapi *MyFoodApi) buildOptions(options ...MyFoodApiOption) *requestOptions {
-	opts := &requestOptions{}
-	for _, o := range options {
-		o(opts)
-	}
-	return opts
 }
 
 // Make a MyFood Rest API call
@@ -207,7 +194,7 @@ func (mfapi *MyFoodApi) GetToken(username, password string) (t *TokenData, err e
 		return
 	}
 
-	var tres *TokenResultData
+	tres := &TokenResultData{}
 	if err = json.Unmarshal(body, tres); err != nil {
 		return
 	}
@@ -227,7 +214,7 @@ func (mfapi *MyFoodApi) RefreshToken(token *TokenData) (t *TokenData, err error)
 		return
 	}
 
-	var tres *TokenResultData
+	tres := &TokenResultData{}
 	if err = json.Unmarshal(body, tres); err != nil {
 		return
 	}
@@ -254,6 +241,7 @@ func (mfapi *MyFoodApi) GetProductionUnitDetailForUser(token string, id uint, ti
 		return
 	}
 
+	p = &ProdUnitDetailData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}
@@ -273,6 +261,7 @@ func (mfapi *MyFoodApi) GetAllProductionUnitIdsForCurrentUser(token string) (p *
 		return
 	}
 
+	p = &ProdUnitsData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}
@@ -299,6 +288,7 @@ func (mfapi *MyFoodApi) GetPHMeasureForUser(token string, id uint, timerange uin
 		return
 	}
 
+	p = &ResultData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}
@@ -325,6 +315,7 @@ func (mfapi *MyFoodApi) GetWaterTemperatureForUser(token string, id uint, timera
 		return
 	}
 
+	p = &ResultData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}
@@ -351,6 +342,7 @@ func (mfapi *MyFoodApi) GetAirTemperatureMeasureForUser(token string, id uint, t
 		return
 	}
 
+	p = &ResultData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}
@@ -377,6 +369,7 @@ func (mfapi *MyFoodApi) GetHumidityMeasureForUser(token string, id uint, timeran
 		return
 	}
 
+	p = &ResultData{}
 	if err = json.Unmarshal(body, p); err != nil {
 		return
 	}

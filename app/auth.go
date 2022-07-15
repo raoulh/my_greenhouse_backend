@@ -23,6 +23,13 @@ func (a *AppServer) apiLogin(c *fiber.Ctx) (err error) {
 		})
 	}
 
+	if u.Name == "" || u.Pass == "" || u.DeviceID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   fmt.Errorf("bad arguments"),
+		})
+	}
+
 	at, err := models.Login(u.Name, u.Pass, u.DeviceID)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
@@ -51,6 +58,8 @@ func (a *AppServer) apiCheckToken(c *fiber.Ctx) (err error) {
 			"msg":   err.Error(),
 		})
 	}
+
+	models.UpdateLastLogin(u)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error": false,

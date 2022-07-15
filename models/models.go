@@ -21,7 +21,7 @@ var (
 	db      *gorm.DB
 	logging *logrus.Entry
 
-	usersLock UsersLock
+	usersLock = make(UsersLock, 0)
 
 	//a pool to start all tasks for refreshing data
 	workerPool   *pond.WorkerPool
@@ -123,7 +123,7 @@ func refreshAllUsers() {
 
 				runningTasks.Store(u.ID, true)
 				workerPool.Submit(func() {
-					RefreshUserData(u.ID)
+					refreshUserData(u.ID)
 
 					//remove user from pool
 					runningTasks.Delete(u.ID)

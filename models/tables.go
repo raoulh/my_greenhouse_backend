@@ -3,19 +3,19 @@ package models
 import "time"
 
 type User struct {
-	ID                         uint               `gorm:"primarykey" json:"-"`
-	CreatedAt                  time.Time          `json:"-"`
-	UpdatedAt                  time.Time          `json:"-"`
-	LastLogin                  time.Time          `json:"-"`
-	DeviceID                   string             `json:"device_id" gorm:"index:idx_deviceid,unique"`
-	MF_Username                string             `json:"myfood_username"`
-	MF_Token                   string             `json:"myfood_token" gorm:"index:idx_token,unique"`
-	MF_RefreshToken            string             `json:"-"`
-	MF_TokenValidity           time.Time          `json:"myfood_validity"`
-	MF_TokenValid              bool               `json:"myfood_token_valid"`
-	MF_UserID                  uint               `json:"pioneer_citizen_number"`
-	MF_RefreshTokenFailureCout uint               `json:"-" gorm:"refresh_token_count"`
-	Meas                       []UnitMeasurements `json:"meas"`
+	ID                         uint                `gorm:"primarykey" json:"-"`
+	CreatedAt                  time.Time           `json:"-"`
+	UpdatedAt                  time.Time           `json:"-"`
+	LastLogin                  time.Time           `json:"-"`
+	DeviceID                   string              `json:"device_id" gorm:"index:idx_deviceid,unique"`
+	MF_Username                string              `json:"myfood_username"`
+	MF_Token                   string              `json:"myfood_token,omitempty" gorm:"index:idx_token,unique"`
+	MF_RefreshToken            string              `json:"-"`
+	MF_TokenValidity           time.Time           `json:"myfood_validity"`
+	MF_TokenValid              bool                `json:"myfood_token_valid"`
+	MF_UserID                  uint                `json:"pioneer_citizen_number"`
+	MF_RefreshTokenFailureCout uint                `json:"-" gorm:"refresh_token_count"`
+	Meas                       []*UnitMeasurements `json:"meas"`
 }
 
 type Measurement struct {
