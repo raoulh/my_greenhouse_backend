@@ -1,13 +1,16 @@
 package app
 
 import (
+	"fmt"
+
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models"
 	"github.com/gofiber/fiber/v2"
 )
 
 type AuthUser struct {
-	Name string `json:"username" xml:"username" form:"username"`
-	Pass string `json:"pass" xml:"pass" form:"pass"`
+	Name     string `json:"username" xml:"username" form:"username"`
+	Pass     string `json:"pass" xml:"pass" form:"pass"`
+	DeviceID string `json:"device_id" xml:"device_id" form:"device_id"`
 }
 
 func (a *AppServer) apiLogin(c *fiber.Ctx) (err error) {
@@ -20,7 +23,7 @@ func (a *AppServer) apiLogin(c *fiber.Ctx) (err error) {
 		})
 	}
 
-	at, err := models.Login(u.Name, u.Pass)
+	at, err := models.Login(u.Name, u.Pass, u.DeviceID)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": true,
@@ -31,17 +34,17 @@ func (a *AppServer) apiLogin(c *fiber.Ctx) (err error) {
 	return c.JSON(at)
 }
 
-func (a *AppServer) apiLogout(c *fiber.Ctx) (err error) {
-	u := new(models.User)
-
-	if err := c.BodyParser(u); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+func (a *AppServer) apiCheckToken(c *fiber.Ctx) (err error) {
+	user := c.Locals("user")
+	u, ok := user.(*models.User)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
-			"msg":   err.Error(),
+			"msg":   fmt.Errorf("unauthorized"),
 		})
 	}
 
-	err = models.Logout(u)
+	err = models.CheckToken(u)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": true,
@@ -51,6 +54,6 @@ func (a *AppServer) apiLogout(c *fiber.Ctx) (err error) {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error": false,
-		"msg":   "logged out",
+		"msg":   "token valid",
 	})
 }

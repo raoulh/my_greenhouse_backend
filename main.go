@@ -53,6 +53,7 @@ func handleSignals() {
 
 	logging.Println("Shuting down...")
 	myApp.Shutdown()
+	models.Shutdown()
 }
 
 func main() {

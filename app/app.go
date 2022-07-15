@@ -47,7 +47,9 @@ func NewApp() (a *AppServer, err error) {
 		}),
 	}
 
-	a.appFiber.Use(fiberLog.New(fiberLog.Config{}))
+	a.appFiber.
+		Use(fiberLog.New(fiberLog.Config{})).
+		Use(NewTokenMiddleware())
 
 	a.appFiber.Use(cors.New(cors.Config{
 		AllowOrigins: "https://greenhouse.raoulh.pw",
@@ -61,11 +63,14 @@ func NewApp() (a *AppServer, err error) {
 	//API
 	api := a.appFiber.Group("/api")
 
-	api.Post("/login", func(c *fiber.Ctx) error {
+	api.Post("/auth/login", func(c *fiber.Ctx) error {
 		return a.apiLogin(c)
 	})
-	api.Post("/logout", func(c *fiber.Ctx) error {
-		return a.apiLogout(c)
+	api.Get("/auth/check", func(c *fiber.Ctx) error {
+		return a.apiCheckToken(c)
+	})
+	api.Get("/data/full", func(c *fiber.Ctx) error {
+		return a.apiGetDataFull(c)
 	})
 
 	return
