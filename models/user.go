@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/myfood"
+	"gorm.io/gorm"
 )
 
 func GetFullUser(userID uint) (u *User, err error) {
@@ -138,7 +139,7 @@ func refreshUserData(userID uint) {
 		u.Meas[idx].Humidity.LastDayTime = prodDetail.Data.LastDayHumidityCaptureTime.Time
 	}
 
-	if db.Save(u).Error != nil {
+	if db.Session(&gorm.Session{FullSaveAssociations: true}).Save(u).Error != nil {
 		logging.Warnf("Failed to save user data into db: %v", err)
 	}
 }
