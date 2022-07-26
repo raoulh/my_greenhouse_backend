@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	fiberLog "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/template/html"
 
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/config"
 	logger "git.raoulh.pw/raoulh/my_greenhouse_backend/log"
@@ -44,6 +45,7 @@ func NewApp() (a *AppServer, err error) {
 			DisableStartupMessage: true,
 			EnablePrintRoutes:     false,
 			BodyLimit:             maxFileSize,
+			Views:                 html.New(config.Config.String("general.data"), ".tpl"),
 		}),
 	}
 
@@ -74,6 +76,10 @@ func NewApp() (a *AppServer, err error) {
 	})
 	api.Get("/data/refresh", func(c *fiber.Ctx) error {
 		return a.apiDataRefresh(c)
+	})
+
+	a.appFiber.Get("/apple-app-site-association", func(c *fiber.Ctx) error {
+		return c.Render("apple-app-site-association", fiber.Map{})
 	})
 
 	return
