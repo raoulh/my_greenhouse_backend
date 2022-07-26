@@ -85,6 +85,8 @@ func Login(username, pass, deviceID string) (u *User, err error) {
 		MF_RefreshTokenFailureCout: 0,
 	}
 
+	logging.Infof("Create new user entry: %s/%s", u.MF_Username, u.DeviceID)
+
 	err = db.Create(u).Error
 
 	go refreshUserData(u.ID)

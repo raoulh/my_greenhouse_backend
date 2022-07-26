@@ -33,6 +33,10 @@ func (p *TokenTime) UnmarshalJSON(bytes []byte) error {
 		return err
 	}
 
+	if raw == "-" {
+		return nil
+	}
+
 	t, err := time.Parse("2006-01-02T15:04:05", raw)
 	if err != nil {
 		return err
@@ -62,6 +66,10 @@ func (p *LastDayDate) UnmarshalJSON(bytes []byte) error {
 		return err
 	}
 
+	if raw == "-" {
+		return nil
+	}
+
 	t, err := time.Parse("1/2/2006", raw)
 	if err != nil {
 		return err
@@ -81,6 +89,10 @@ func (p *LastCaptureTime) UnmarshalJSON(bytes []byte) error {
 	err := json.Unmarshal(bytes, &raw)
 	if err != nil {
 		return err
+	}
+
+	if raw == "-" {
+		return nil
 	}
 
 	t, err := time.Parse("3:04 PM", raw)
@@ -149,6 +161,10 @@ func (p *ResultDataTime) UnmarshalJSON(bytes []byte) error {
 	err := json.Unmarshal(bytes, &raw)
 	if err != nil {
 		return err
+	}
+
+	if raw == "-" {
+		return nil
 	}
 
 	t, err := time.Parse("2006-01-02T15:04:05.999999999", raw)

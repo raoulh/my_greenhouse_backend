@@ -7,7 +7,7 @@ type User struct {
 	CreatedAt                  time.Time           `json:"-"`
 	UpdatedAt                  time.Time           `json:"-"`
 	LastLogin                  time.Time           `json:"-"`
-	DeviceID                   string              `json:"device_id" gorm:"index:idx_deviceid,unique"`
+	DeviceID                   string              `json:"device_id" gorm:"index:idx_deviceid"`
 	MF_Username                string              `json:"myfood_username"`
 	MF_Token                   string              `json:"myfood_token,omitempty" gorm:"index:idx_token,unique"`
 	MF_RefreshToken            string              `json:"-"`
