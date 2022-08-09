@@ -47,7 +47,7 @@ func SetNotifSettings(u *User, n *NotifSettings) (err error) {
 func createDefaultNotifSettings(notifType uint) (n *NotifSettings) {
 	n = &NotifSettings{
 		Type:    notifType,
-		MinTime: time.Hour * 1, //1hour
+		MinTime: time.Hour * 2, //2 hours without data
 	}
 
 	switch notifType {
