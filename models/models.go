@@ -56,7 +56,7 @@ func init() {
 	logging = logger.NewLogger("database")
 }
 
-//Init models
+// Init models
 func Init() (err error) {
 	logging.Infof("Opening database %s", config.Config.String("database.dsn"))
 	db, err = gorm.Open(postgres.New(postgres.Config{
@@ -80,7 +80,7 @@ func Init() (err error) {
 	return
 }
 
-//Shutdown models
+// Shutdown models
 func Shutdown() {
 	close(quitRefresh)
 	workerPool.StopAndWait()
@@ -92,6 +92,7 @@ func migrateDb() {
 	db.AutoMigrate(
 		&User{},
 		&UnitMeasurements{},
+		&NotifSettings{},
 	)
 
 	logging.Infof("Migration did run successfully")

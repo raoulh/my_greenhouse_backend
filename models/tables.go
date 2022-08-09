@@ -2,12 +2,19 @@ package models
 
 import "time"
 
+const (
+	NotifHwIOS = iota + 1
+	NotifHwAndroid
+)
+
 type User struct {
 	ID                         uint                `gorm:"primarykey" json:"-"`
 	CreatedAt                  time.Time           `json:"-"`
 	UpdatedAt                  time.Time           `json:"-"`
 	LastLogin                  time.Time           `json:"-"`
 	DeviceID                   string              `json:"device_id" gorm:"index:idx_deviceid"`
+	NotifToken                 string              `json:"-"`
+	NotifHwType                uint                `json:"-"`
 	MF_Username                string              `json:"myfood_username"`
 	MF_Token                   string              `json:"myfood_token,omitempty" gorm:"index:idx_token,unique"`
 	MF_RefreshToken            string              `json:"-"`
@@ -38,4 +45,26 @@ type UnitMeasurements struct {
 	Water    Measurement `gorm:"embedded;embeddedPrefix:water_" json:"watertemp"`
 	Air      Measurement `gorm:"embedded;embeddedPrefix:air_" json:"airtemp"`
 	Humidity Measurement `gorm:"embedded;embeddedPrefix:humidity_" json:"humidity"`
+}
+
+const (
+	NotifTypePh uint = iota + 1
+	NotifTypeWaterTemp
+	NotifTypeAirTemp
+	NotifTypeHumidity
+)
+
+type NotifSettings struct {
+	ID        uint      `gorm:"primarykey" json:"-"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	UserID    uint      `json:"-"`
+
+	Type           uint          `json:"type"`
+	RangeEnabled   bool          `json:"range_enabled"`
+	RangeMin       float32       `json:"range_min"`
+	RangeMax       float32       `json:"range_max"`
+	TooFastEnabled bool          `json:"too_fast_enabled"`
+	TimeEnabled    bool          `json:"time_enabled"`
+	MinTime        time.Duration `json:"time_min"`
 }

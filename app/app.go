@@ -12,6 +12,7 @@ import (
 
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/config"
 	logger "git.raoulh.pw/raoulh/my_greenhouse_backend/log"
+	"git.raoulh.pw/raoulh/my_greenhouse_backend/models"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,7 +33,7 @@ func init() {
 	logging = logger.NewLogger("app")
 }
 
-//Init the app
+// Init the app
 func NewApp() (a *AppServer, err error) {
 	logging.Infoln("Init server")
 
@@ -78,6 +79,36 @@ func NewApp() (a *AppServer, err error) {
 		return a.apiDataRefresh(c)
 	})
 
+	api.Post("/notif/id", func(c *fiber.Ctx) error {
+		return a.apiNotifId(c)
+	})
+
+	api.Get("/notif/ph", func(c *fiber.Ctx) error {
+		return a.apiNotifGet(c, models.NotifTypePh)
+	})
+	api.Get("/notif/watertemp", func(c *fiber.Ctx) error {
+		return a.apiNotifGet(c, models.NotifTypeWaterTemp)
+	})
+	api.Get("/notif/airtemp", func(c *fiber.Ctx) error {
+		return a.apiNotifGet(c, models.NotifTypeAirTemp)
+	})
+	api.Get("/notif/humidity", func(c *fiber.Ctx) error {
+		return a.apiNotifGet(c, models.NotifTypeHumidity)
+	})
+
+	api.Get("/notif/ph", func(c *fiber.Ctx) error {
+		return a.apiNotifSet(c, models.NotifTypePh)
+	})
+	api.Get("/notif/watertemp", func(c *fiber.Ctx) error {
+		return a.apiNotifSet(c, models.NotifTypeWaterTemp)
+	})
+	api.Get("/notif/airtemp", func(c *fiber.Ctx) error {
+		return a.apiNotifSet(c, models.NotifTypeAirTemp)
+	})
+	api.Get("/notif/humidity", func(c *fiber.Ctx) error {
+		return a.apiNotifSet(c, models.NotifTypeHumidity)
+	})
+
 	a.appFiber.Get("/apple-app-site-association", func(c *fiber.Ctx) error {
 		return c.Render("apple-app-site-association", fiber.Map{})
 	})
@@ -85,7 +116,7 @@ func NewApp() (a *AppServer, err error) {
 	return
 }
 
-//Run the app
+// Run the app
 func (a *AppServer) Start() {
 	addr := config.Config.String("general.address") + ":" + strconv.Itoa(config.Config.Int("general.port"))
 
@@ -99,7 +130,7 @@ func (a *AppServer) Start() {
 	a.wgDone.Add(1)
 }
 
-//Stop the app
+// Stop the app
 func (a *AppServer) Shutdown() {
 	close(a.quitHeartbeat)
 	a.appFiber.Shutdown()
