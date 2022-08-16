@@ -48,7 +48,7 @@ upload: upload-server ## Upload binaries using ssh
 
 upload-server: build-server ## Upload server binary
 	@rsync -avP ./out/$(BINARY_NAME) root@$(SRV_DEPLOY):/usr/local/bin/$(BINARY_NAME)
-	@ssh root@$(SRV_DEPLOY) chown 755 /usr/local/bin/$(BINARY_NAME)
+	@ssh root@$(SRV_DEPLOY) chmod 755 /usr/local/bin/$(BINARY_NAME)
 
 ## Test:
 test: ## Run the tests of the project
