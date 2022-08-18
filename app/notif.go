@@ -61,8 +61,10 @@ func (a *AppServer) apiNotifSet(c *fiber.Ctx, notifType uint) (err error) {
 }
 
 type NotifHwId struct {
-	Token  string `json:"token" xml:"token" form:"token"`
-	HwType uint   `json:"hw" xml:"hw" form:"hw"`
+	Token       string `json:"token" xml:"token" form:"token"`
+	HwType      uint   `json:"hw" xml:"hw" form:"hw"`
+	Locale      string `json:"locale" xml:"locale" form:"locale"`
+	Development bool   `json:"dev" xml:"dev" form:"dev"`
 }
 
 func (a *AppServer) apiNotifId(c *fiber.Ctx) (err error) {
@@ -83,7 +85,7 @@ func (a *AppServer) apiNotifId(c *fiber.Ctx) (err error) {
 		})
 	}
 
-	err = models.UpdateNotifToken(u, n.Token, n.HwType)
+	err = models.UpdateNotifToken(u, n.Token, n.HwType, n.Locale, n.Development)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": true,

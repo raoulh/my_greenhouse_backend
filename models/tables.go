@@ -15,6 +15,8 @@ type User struct {
 	DeviceID                   string              `json:"device_id" gorm:"index:idx_deviceid"`
 	NotifToken                 string              `json:"-"`
 	NotifHwType                uint                `json:"-"`
+	NotifLocale                string              `json:"-"`
+	NotifDevelopment           bool                `json:"-"`
 	MF_Username                string              `json:"myfood_username"`
 	MF_Token                   string              `json:"myfood_token,omitempty" gorm:"index:idx_token,unique"`
 	MF_RefreshToken            string              `json:"-"`

@@ -68,9 +68,11 @@ func createDefaultNotifSettings(notifType uint) (n *NotifSettings) {
 	return
 }
 
-func UpdateNotifToken(u *User, token string, hwType uint) (err error) {
+func UpdateNotifToken(u *User, token string, hwType uint, locale string, dev bool) (err error) {
 	u.NotifToken = token
 	u.NotifHwType = hwType
+	u.NotifLocale = locale
+	u.NotifDevelopment = dev
 
 	err = db.Save(u).Error
 	return
