@@ -96,16 +96,16 @@ func NewApp() (a *AppServer, err error) {
 		return a.apiNotifGet(c, models.NotifTypeHumidity)
 	})
 
-	api.Get("/notif/ph", func(c *fiber.Ctx) error {
+	api.Post("/notif/ph", func(c *fiber.Ctx) error {
 		return a.apiNotifSet(c, models.NotifTypePh)
 	})
-	api.Get("/notif/watertemp", func(c *fiber.Ctx) error {
+	api.Post("/notif/watertemp", func(c *fiber.Ctx) error {
 		return a.apiNotifSet(c, models.NotifTypeWaterTemp)
 	})
-	api.Get("/notif/airtemp", func(c *fiber.Ctx) error {
+	api.Post("/notif/airtemp", func(c *fiber.Ctx) error {
 		return a.apiNotifSet(c, models.NotifTypeAirTemp)
 	})
-	api.Get("/notif/humidity", func(c *fiber.Ctx) error {
+	api.Post("/notif/humidity", func(c *fiber.Ctx) error {
 		return a.apiNotifSet(c, models.NotifTypeHumidity)
 	})
 
