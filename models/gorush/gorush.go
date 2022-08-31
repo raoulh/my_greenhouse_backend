@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/config"
@@ -17,22 +17,22 @@ type GorushNotif struct {
 }
 
 type AndroidNotif struct {
-	Tokens       []string
-	Platform     uint
-	Message      string
-	Title        string
+	Tokens       []string `json:"tokens"`
+	Platform     uint     `json:"platform"`
+	Message      string   `json:"message"`
+	Title        string   `json:"title"`
 	Notification struct {
-		Icon  string
-		Sound string
-	}
+		Icon  string `json:"icon"`
+		Sound string `json:"sound"`
+	} `json:"notification"`
 }
 
 type IOSNotif struct {
-	Tokens      []string
-	Platform    uint
-	Message     string
-	Topic       string
-	Development bool
+	Tokens      []string `json:"tokens"`
+	Platform    uint     `json:"platform"`
+	Message     string   `json:"message"`
+	Topic       string   `json:"topic"`
+	Development bool     `json:"development"`
 }
 
 var logging *logrus.Entry
@@ -44,24 +44,28 @@ func init() {
 func SendPushMessage(hwType uint, token string, message string, isDev bool) (err error) {
 	url := config.Config.String("gorush.push_url")
 
-	var data []byte
+	logging.Debugf("Sending push to gorush@: %s", url)
+
+	gn := GorushNotif{}
+
 	if hwType == 1 {
 		n := createIOSNotif(token, message, isDev)
-		data, err = json.Marshal(n)
-		logging.Errorf("json marshall failure: %s", err)
-		if err != nil {
-			return
-		}
+		gn.Notifications = append(gn.Notifications, n)
 	} else if hwType == 2 {
 		n := createAndroidNotif(token, message, isDev)
-		data, err = json.Marshal(n)
-		logging.Errorf("json marshall failure: %s", err)
-		if err != nil {
-			return
-		}
+		gn.Notifications = append(gn.Notifications, n)
 	} else {
 		return fmt.Errorf("unknown hw type")
 	}
+
+	var data []byte
+	data, err = json.Marshal(gn)
+	if err != nil {
+		logging.Errorf("json marshall failure: %s", err)
+		return
+	}
+
+	logging.Debugf("JSON notif: %s", string(data))
 
 	body := bytes.NewBuffer(data)
 
@@ -72,7 +76,7 @@ func SendPushMessage(hwType uint, token string, message string, isDev bool) (err
 
 	if res.StatusCode != 200 {
 		defer res.Body.Close()
-		b, _ := ioutil.ReadAll(res.Body)
+		b, _ := io.ReadAll(res.Body)
 		logging.Errorf("gorush notification failed: %s", string(b))
 		return fmt.Errorf("gorush failure")
 	}
@@ -85,7 +89,7 @@ func createIOSNotif(token string, message string, isDev bool) *IOSNotif {
 		Tokens:      []string{token},
 		Platform:    1,
 		Message:     message,
-		Topic:       "fr.calaos.myGreenhous",
+		Topic:       "fr.calaos.myGreenhouse",
 		Development: isDev,
 	}
 }

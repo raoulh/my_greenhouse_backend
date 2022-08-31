@@ -44,11 +44,14 @@ clean: ## Remove build related file
 	rm -f ./junit-report.xml checkstyle-report.xml ./coverage.xml ./profile.cov yamllint-checkstyle.xml
 
 ## Upload:
-upload: upload-server ## Upload binaries using ssh
+upload: upload-server upload-data ## Upload binaries using ssh
 
 upload-server: build-server ## Upload server binary
 	@rsync -avP ./out/$(BINARY_NAME) root@$(SRV_DEPLOY):/usr/local/bin/$(BINARY_NAME)
 	@ssh root@$(SRV_DEPLOY) chmod 755 /usr/local/bin/$(BINARY_NAME)
+
+upload-data: ## Upload data files
+	@rsync -avP ./notifications/*.notif root@$(SRV_DEPLOY):/usr/local/share/greenhouse/
 
 ## Test:
 test: ## Run the tests of the project

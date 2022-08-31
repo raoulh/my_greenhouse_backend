@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/gorush"
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/myfood"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func RefreshUserData(u *User) {
 	refreshUserData(u.ID)
 }
 
-//refreshUserData will call MyFood api to retrieve latest data and measurements
+// refreshUserData will call MyFood api to retrieve latest data and measurements
 func refreshUserData(userID uint) {
 	u, err := GetFullUser(userID)
 	if err != nil {
@@ -142,4 +143,14 @@ func refreshUserData(userID uint) {
 	if db.Session(&gorm.Session{FullSaveAssociations: true}).Save(u).Error != nil {
 		logging.Warnf("Failed to save user data into db: %v", err)
 	}
+
+	logging.Debugf("User: %d %s %v", u.ID, u.MF_Username, u.NotifDevelopment)
+	if u.NotifDevelopment {
+		err = gorush.SendPushMessage(u.NotifHwType, u.NotifToken, "refreshUserData called !", u.NotifDevelopment)
+		if err != nil {
+			logging.Warnf("Failed to send push: %v", err)
+		}
+	}
+
+	u.handleNotifications()
 }

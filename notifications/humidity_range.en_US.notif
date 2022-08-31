@@ -1,0 +1,1 @@
+Humidity is out of range. Current value: {{.CurrentValue}}%
