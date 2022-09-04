@@ -191,9 +191,9 @@ func (u *User) handleNotifications() {
 func (u *User) executeTemplate(t *template.Template, templateName string, n *NotifSettings) string {
 	var b bytes.Buffer
 
-	tt := t.Lookup(templateName + "." + u.NotifLocale)
+	tt := t.Lookup(fmt.Sprintf("%s.%s.notif", templateName, u.NotifLocale))
 	if tt == nil {
-		tt = t.Lookup(templateName + ".en_US")
+		tt = t.Lookup(fmt.Sprintf("%s.en_US.notif", templateName))
 
 		if tt == nil {
 			logging.Errorf("template named '%s' does not exist", templateName)
