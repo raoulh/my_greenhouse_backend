@@ -73,9 +73,9 @@ func SendPushMessage(hwType uint, token string, message string, isDev bool) (err
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		defer res.Body.Close()
 		b, _ := io.ReadAll(res.Body)
 		logging.Errorf("gorush notification failed: %s", string(b))
 		return fmt.Errorf("gorush failure")
