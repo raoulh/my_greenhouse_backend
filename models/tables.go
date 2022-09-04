@@ -69,4 +69,6 @@ type NotifSettings struct {
 	TooFastEnabled bool          `json:"too_fast_enabled"`
 	TimeEnabled    bool          `json:"time_enabled"`
 	MinTime        time.Duration `json:"time_min"`
+
+	CurrentValue float32 `json:"-" gorm:"-"`
 }

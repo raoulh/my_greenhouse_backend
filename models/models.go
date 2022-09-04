@@ -123,11 +123,12 @@ func refreshAllUsers() {
 				}
 
 				runningTasks.Store(u.ID, true)
+				userId := u.ID
 				workerPool.Submit(func() {
-					refreshUserData(u.ID)
+					refreshUserData(userId)
 
 					//remove user from pool
-					runningTasks.Delete(u.ID)
+					runningTasks.Delete(userId)
 				})
 			}
 		}
