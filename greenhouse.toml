@@ -1,6 +1,6 @@
 [general]
 #Main url
-url = "https://greenhouse.raoulh.pw"
+url = "https://greenhouse.example.com"
 
 #Port to listen for Web
 port = 8000
