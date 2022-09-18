@@ -36,12 +36,13 @@ type Measurement struct {
 }
 
 type UnitMeasurements struct {
-	ID           uint      `gorm:"primarykey" json:"-"`
-	CreatedAt    time.Time `json:"-"`
-	UpdatedAt    time.Time `json:"-"`
-	UserID       uint      `json:"-"`
-	ProdUnitID   uint      `json:"product_unit_id"`
-	ProdUnitType string    `json:"production_unit_type"`
+	ID                uint      `gorm:"primarykey" json:"-"`
+	CreatedAt         time.Time `json:"-"`
+	UpdatedAt         time.Time `json:"-"`
+	UserID            uint      `json:"-"`
+	ProdUnitID        uint      `json:"product_unit_id"`
+	ProdUnitType      string    `json:"production_unit_type"`
+	ProdUnitReference string    `json:"production_ref"`
 
 	PH       Measurement `gorm:"embedded;embeddedPrefix:ph_" json:"ph"`
 	Water    Measurement `gorm:"embedded;embeddedPrefix:water_" json:"watertemp"`

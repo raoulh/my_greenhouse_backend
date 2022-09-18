@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/gorush"
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/myfood"
 	"gorm.io/gorm"
 )
@@ -85,10 +84,12 @@ func refreshUserData(userID uint) {
 
 		if idx >= 0 { //this prodId exists already
 			u.Meas[idx].ProdUnitID = units.Data.ProductUnits[i].ID
+			u.Meas[idx].ProdUnitReference = units.Data.ProductUnits[i].Reference
 		} else {
 			//create a new entry
 			umeas := UnitMeasurements{
-				ProdUnitID: units.Data.ProductUnits[i].ID,
+				ProdUnitID:        units.Data.ProductUnits[i].ID,
+				ProdUnitReference: units.Data.ProductUnits[i].Reference,
 			}
 			u.Meas = append(u.Meas, &umeas)
 			idx = len(u.Meas) - 1
@@ -144,13 +145,15 @@ func refreshUserData(userID uint) {
 		logging.Warnf("Failed to save user data into db: %v", err)
 	}
 
-	logging.Debugf("User: %d %s %v", u.ID, u.MF_Username, u.NotifDevelopment)
-	if u.NotifDevelopment {
-		err = gorush.SendPushMessage(u.NotifHwType, u.NotifToken, "refreshUserData called !", u.NotifDevelopment)
-		if err != nil {
-			logging.Warnf("Failed to send push: %v", err)
+	/*
+		logging.Debugf("User: %d %s %v", u.ID, u.MF_Username, u.NotifDevelopment)
+		if u.NotifDevelopment {
+			err = gorush.SendPushMessage(u.NotifHwType, u.NotifToken, "refreshUserData called !", u.NotifDevelopment)
+			if err != nil {
+				logging.Warnf("Failed to send push: %v", err)
+			}
 		}
-	}
+	*/
 
 	u.handleNotifications()
 }
