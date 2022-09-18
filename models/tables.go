@@ -58,10 +58,11 @@ const (
 )
 
 type NotifSettings struct {
-	ID        uint      `gorm:"primarykey" json:"-"`
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
-	UserID    uint      `json:"-"`
+	ID         uint      `gorm:"primarykey" json:"-"`
+	CreatedAt  time.Time `json:"-"`
+	UpdatedAt  time.Time `json:"-"`
+	UserID     uint      `json:"-"`
+	ProdUnitID uint      `json:"product_unit_id"`
 
 	Type           uint          `json:"type"`
 	RangeEnabled   bool          `json:"range_enabled"`

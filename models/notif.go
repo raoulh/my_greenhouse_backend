@@ -10,17 +10,17 @@ import (
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models/gorush"
 )
 
-func GetNotifSettings(u *User, notifType uint) (n *NotifSettings, err error) {
+func GetNotifSettings(u *User, notifType, prodId uint) (n *NotifSettings, err error) {
 	if u.ID == 0 {
 		return n, fmt.Errorf("userID is 0")
 	}
 
 	n = &NotifSettings{}
-	err = db.Where("user_id = ? and type = ?", u.ID, notifType).First(n).Error
+	err = db.Where("user_id = ? and type = ? and prod_unit_id = ?", u.ID, notifType, prodId).First(n).Error
 
 	//this notif settings does not exist yet
 	if err != nil {
-		n = createDefaultNotifSettings(notifType)
+		n = createDefaultNotifSettings(notifType, prodId)
 		n.UserID = u.ID
 		err = db.Create(n).Error
 		return
@@ -35,7 +35,7 @@ func SetNotifSettings(u *User, n *NotifSettings) (err error) {
 	}
 
 	notif := &NotifSettings{}
-	err = db.Where("user_id = ? and type = ?", u.ID, n.Type).First(notif).Error
+	err = db.Where("user_id = ? and type = ? and prod_unit_id = ?", u.ID, n.Type, n.ProdUnitID).First(notif).Error
 
 	notif.UserID = u.ID
 	notif.Type = n.Type
@@ -46,6 +46,10 @@ func SetNotifSettings(u *User, n *NotifSettings) (err error) {
 	notif.TimeEnabled = n.TimeEnabled
 	notif.MinTime = n.MinTime
 
+	if n.ProdUnitID <= 0 {
+		return fmt.Errorf("bad product_unit_id")
+	}
+
 	if err != nil {
 		err = db.Create(notif).Error
 	} else {
@@ -55,10 +59,11 @@ func SetNotifSettings(u *User, n *NotifSettings) (err error) {
 	return
 }
 
-func createDefaultNotifSettings(notifType uint) (n *NotifSettings) {
+func createDefaultNotifSettings(notifType, prodId uint) (n *NotifSettings) {
 	n = &NotifSettings{
-		Type:    notifType,
-		MinTime: time.Hour * 2, //2 hours without data
+		Type:       notifType,
+		MinTime:    time.Hour * 2, //2 hours without data
+		ProdUnitID: prodId,
 	}
 
 	switch notifType {
@@ -93,8 +98,8 @@ func UpdateNotifToken(u *User, token string, hwType uint, locale string, dev boo
 func (u *User) handleNotifications() {
 	t := template.Must(template.ParseGlob(config.Config.String("general.data") + "/*.notif"))
 
-	for idx := range u.Meas {
-		n, err := GetNotifSettings(u, NotifTypePh)
+	for idx, meas := range u.Meas {
+		n, err := GetNotifSettings(u, NotifTypePh, meas.ProdUnitID)
 		if err == nil {
 
 			//Check out-of-range
@@ -117,7 +122,7 @@ func (u *User) handleNotifications() {
 
 		}
 
-		n, err = GetNotifSettings(u, NotifTypeWaterTemp)
+		n, err = GetNotifSettings(u, NotifTypeWaterTemp, meas.ProdUnitID)
 		if err == nil {
 
 			//Check out-of-range
@@ -140,7 +145,7 @@ func (u *User) handleNotifications() {
 
 		}
 
-		n, err = GetNotifSettings(u, NotifTypeAirTemp)
+		n, err = GetNotifSettings(u, NotifTypeAirTemp, meas.ProdUnitID)
 		if err == nil {
 
 			//Check out-of-range
@@ -163,7 +168,7 @@ func (u *User) handleNotifications() {
 
 		}
 
-		n, err = GetNotifSettings(u, NotifTypeHumidity)
+		n, err = GetNotifSettings(u, NotifTypeHumidity, meas.ProdUnitID)
 		if err == nil {
 
 			//Check out-of-range

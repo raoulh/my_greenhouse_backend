@@ -83,16 +83,16 @@ func NewApp() (a *AppServer, err error) {
 		return a.apiNotifId(c)
 	})
 
-	api.Get("/notif/ph", func(c *fiber.Ctx) error {
+	api.Get("/notif/ph/:prodid", func(c *fiber.Ctx) error {
 		return a.apiNotifGet(c, models.NotifTypePh)
 	})
-	api.Get("/notif/watertemp", func(c *fiber.Ctx) error {
+	api.Get("/notif/watertemp/:prodid", func(c *fiber.Ctx) error {
 		return a.apiNotifGet(c, models.NotifTypeWaterTemp)
 	})
-	api.Get("/notif/airtemp", func(c *fiber.Ctx) error {
+	api.Get("/notif/airtemp/:prodid", func(c *fiber.Ctx) error {
 		return a.apiNotifGet(c, models.NotifTypeAirTemp)
 	})
-	api.Get("/notif/humidity", func(c *fiber.Ctx) error {
+	api.Get("/notif/humidity/:prodid", func(c *fiber.Ctx) error {
 		return a.apiNotifGet(c, models.NotifTypeHumidity)
 	})
 
@@ -136,7 +136,3 @@ func (a *AppServer) Shutdown() {
 	a.appFiber.Shutdown()
 	a.wgDone.Wait()
 }
-
-const (
-	heartbeatTime = 5 * time.Second
-)

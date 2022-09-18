@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"strconv"
 
 	"git.raoulh.pw/raoulh/my_greenhouse_backend/models"
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,16 @@ func (a *AppServer) apiNotifGet(c *fiber.Ctx, notifType uint) (err error) {
 		})
 	}
 
-	settings, err := models.GetNotifSettings(u, notifType)
+	prodIdStr := c.Params("prodid", "0")
+	prodId, err := strconv.Atoi(prodIdStr)
+	if err != nil || prodId <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	settings, err := models.GetNotifSettings(u, notifType, uint(prodId))
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": true,
