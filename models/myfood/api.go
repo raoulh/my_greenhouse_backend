@@ -181,7 +181,7 @@ func (mfapi *MyFoodApi) makeHttpCall(
 	return resp, bodyBytes, err
 }
 
-//GetToken authenticate a user and retrieve a token
+// GetToken authenticate a user and retrieve a token
 func (mfapi *MyFoodApi) GetToken(username, password string) (t *TokenData, err error) {
 
 	d := &AuthData{
@@ -206,7 +206,7 @@ func (mfapi *MyFoodApi) GetToken(username, password string) (t *TokenData, err e
 	return &tres.Data.TokenData, nil
 }
 
-//RefreshToken refresh an existing token
+// RefreshToken refresh an existing token
 func (mfapi *MyFoodApi) RefreshToken(token *TokenData) (t *TokenData, err error) {
 
 	_, body, err := mfapi.call("POST", "/api/identity/token/refresh", url.Values{}, token)
@@ -226,11 +226,12 @@ func (mfapi *MyFoodApi) RefreshToken(token *TokenData) (t *TokenData, err error)
 	return &tres.Data.TokenData, nil
 }
 
-//GetProductionUnitDetailForUser get info for the greenhouse id
+// GetProductionUnitDetailForUser get info for the greenhouse id
 // timerange option:
-// 		LastDay = 0,
-//		LastWeek = 1
-//		LastThreeMonths =2
+//
+//	LastDay = 0,
+//	LastWeek = 1
+//	LastThreeMonths =2
 func (mfapi *MyFoodApi) GetProductionUnitDetailForUser(token string, id uint, timerange uint) (p *ProdUnitDetailData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/ProductionUnit/GetProductionUnitDetailForUser", token, url.Values{
@@ -253,7 +254,7 @@ func (mfapi *MyFoodApi) GetProductionUnitDetailForUser(token string, id uint, ti
 	return
 }
 
-//GetAllProductionUnitIdsForCurrentUser gets all greenhouse for a user
+// GetAllProductionUnitIdsForCurrentUser gets all greenhouse for a user
 func (mfapi *MyFoodApi) GetAllProductionUnitIdsForCurrentUser(token string) (p *ProdUnitsData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/ProductionUnit/GetAllProductionUnitIdsForCurrentUser", token, url.Values{}, nil)
@@ -273,11 +274,12 @@ func (mfapi *MyFoodApi) GetAllProductionUnitIdsForCurrentUser(token string) (p *
 	return
 }
 
-//GetPHMeasureForUser get pH measurements for specified greenhouse
+// GetPHMeasureForUser get pH measurements for specified greenhouse
 // timerange option:
-// 		LastDay = 0,
-//		LastWeek = 1
-//		LastThreeMonths =2
+//
+//	LastDay = 0,
+//	LastWeek = 1
+//	LastThreeMonths =2
 func (mfapi *MyFoodApi) GetPHMeasureForUser(token string, id uint, timerange uint) (p *ResultData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/Measures/GetPHMeasureForUser", token, url.Values{
@@ -300,11 +302,12 @@ func (mfapi *MyFoodApi) GetPHMeasureForUser(token string, id uint, timerange uin
 	return
 }
 
-//GetWaterTemperatureForUser get water temp measurements for specified greenhouse
+// GetWaterTemperatureForUser get water temp measurements for specified greenhouse
 // timerange option:
-// 		LastDay = 0,
-//		LastWeek = 1
-//		LastThreeMonths =2
+//
+//	LastDay = 0,
+//	LastWeek = 1
+//	LastThreeMonths =2
 func (mfapi *MyFoodApi) GetWaterTemperatureForUser(token string, id uint, timerange uint) (p *ResultData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/Measures/GetWaterTemperatureForUser", token, url.Values{
@@ -327,11 +330,12 @@ func (mfapi *MyFoodApi) GetWaterTemperatureForUser(token string, id uint, timera
 	return
 }
 
-//GetAirTemperatureMeasureForUser get air temp measurements for specified greenhouse
+// GetAirTemperatureMeasureForUser get air temp measurements for specified greenhouse
 // timerange option:
-// 		LastDay = 0,
-//		LastWeek = 1
-//		LastThreeMonths =2
+//
+//	LastDay = 0,
+//	LastWeek = 1
+//	LastThreeMonths =2
 func (mfapi *MyFoodApi) GetAirTemperatureMeasureForUser(token string, id uint, timerange uint) (p *ResultData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/Measures/GetAirTemperatureMeasureForUser", token, url.Values{
@@ -354,11 +358,12 @@ func (mfapi *MyFoodApi) GetAirTemperatureMeasureForUser(token string, id uint, t
 	return
 }
 
-//GetHumidityMeasureForUser get humidity measurements for specified greenhouse
+// GetHumidityMeasureForUser get humidity measurements for specified greenhouse
 // timerange option:
-// 		LastDay = 0,
-//		LastWeek = 1
-//		LastThreeMonths =2
+//
+//	LastDay = 0,
+//	LastWeek = 1
+//	LastThreeMonths =2
 func (mfapi *MyFoodApi) GetHumidityMeasureForUser(token string, id uint, timerange uint) (p *ResultData, err error) {
 
 	_, body, err := mfapi.callWithToken("GET", "/api/v1/Measures/GetHumidityMeasureForUser", token, url.Values{

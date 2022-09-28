@@ -2,6 +2,7 @@ package myfood
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -21,45 +22,20 @@ type TokenData struct {
 	RefreshToken string `json:"refreshToken,omitempty"`
 }
 
-type TokenTime struct {
+type ApiTime struct {
 	time.Time
-}
-
-// UnmarshalJSON decodes 0001-01-01T00:00:00 into a time.Time object
-func (p *TokenTime) UnmarshalJSON(bytes []byte) error {
-	var raw string
-	err := json.Unmarshal(bytes, &raw)
-	if err != nil {
-		return err
-	}
-
-	if raw == "-" {
-		return nil
-	}
-
-	t, err := time.Parse("2006-01-02T15:04:05", raw)
-	if err != nil {
-		return err
-	}
-
-	p.Time = t
-	return nil
 }
 
 type TokenResultData struct {
 	BaseMessage
 	Data struct {
 		TokenData
-		RefreshTokenExpiryTime TokenTime `json:"refreshTokenExpiryTime,omitempty"`
+		RefreshTokenExpiryTime ApiTime `json:"refreshTokenExpiryTime,omitempty"`
 	}
 }
 
-type LastDayDate struct {
-	time.Time
-}
-
-// UnmarshalJSON decodes 0001-01-01T00:00:00 into a time.Time object
-func (p *LastDayDate) UnmarshalJSON(bytes []byte) error {
+// UnmarshalJSON decodes all times format from API into a time.Time object
+func (p *ApiTime) UnmarshalJSON(bytes []byte) error {
 	var raw string
 	err := json.Unmarshal(bytes, &raw)
 	if err != nil {
@@ -70,73 +46,57 @@ func (p *LastDayDate) UnmarshalJSON(bytes []byte) error {
 		return nil
 	}
 
-	t, err := time.Parse("1/2/2006", raw)
-	if err != nil {
-		return err
+	formats := []string{"3:04 PM", "1/2/2006", "2006-01-02T15:04:05Z", "2006-01-02T15:04:05-07:00", "2006-01-02T15:04:05", "2006-01-02T15:04:05.999999999"}
+
+	parseOk := false
+	for _, f := range formats {
+		t, err := time.Parse(f, raw)
+		if err == nil {
+			p.Time = t
+			parseOk = true
+		}
 	}
 
-	p.Time = t
-	return nil
-}
-
-type LastCaptureTime struct {
-	time.Time
-}
-
-// UnmarshalJSON decodes 0001-01-01T00:00:00 into a time.Time object
-func (p *LastCaptureTime) UnmarshalJSON(bytes []byte) error {
-	var raw string
-	err := json.Unmarshal(bytes, &raw)
-	if err != nil {
-		return err
+	if !parseOk {
+		return fmt.Errorf("failed to parse time for %s", raw)
 	}
 
-	if raw == "-" {
-		return nil
-	}
-
-	t, err := time.Parse("3:04 PM", raw)
-	if err != nil {
-		return err
-	}
-
-	p.Time = t
 	return nil
 }
 
 type ProdUnitDetailData struct {
 	BaseMessage
 	Data struct {
-		PioneerCitizenName          string          `json:"pioneerCitizenName"`
-		PioneerCitizenNumber        uint            `json:"pioneerCitizenNumber"`
-		ProductionUnitVersion       string          `json:"productionUnitVersion"`
-		ProductionUnitType          string          `json:"productionUnitType"`
-		PicturePath                 string          `json:"picturePath"`
-		ProductionUnitOptions       string          `json:"productionUnitOptions"`
-		OnlineSinceWeeks            uint            `json:"onlineSinceWeeks"`
-		AverageMonthlyProduction    uint            `json:"averageMonthlyProduction"`
-		AverageMonthlySparedCO2     float32         `json:"averageMonthlySparedCO2"`
-		CurrentPhValue              float32         `json:"currentPhValue"`
-		CurrentPhCaptureTime        LastCaptureTime `json:"currentPhCaptureTime"`
-		AverageHourPhValue          float32         `json:"averageHourPhValue"`
-		AverageDayPhValue           float32         `json:"averageDayPhValue"`
-		LastDayPhCaptureTime        LastDayDate     `json:"lastDayPhCaptureTime"`
-		CurrentWaterTempValue       float32         `json:"currentWaterTempValue"`
-		CurrentWaterTempCaptureTime LastCaptureTime `json:"currentWaterTempCaptureTime"`
-		AverageHourWaterTempValue   float32         `json:"averageHourWaterTempValue"`
-		AverageDayWaterTempValue    float32         `json:"averageDayWaterTempValue"`
-		LastDayWaterTempCaptureTime LastDayDate     `json:"lastDayWaterTempCaptureTime"`
-		CurrentAirTempValue         float32         `json:"currentAirTempValue"`
-		CurrentAirTempCaptureTime   LastCaptureTime `json:"currentAirTempCaptureTime"`
-		AverageHourAirTempValue     float32         `json:"averageHourAirTempValue"`
-		AverageDayAirTempValue      float32         `json:"averageDayAirTempValue"`
-		LastDayAirTempCaptureTime   LastDayDate     `json:"lastDayAirTempCaptureTime"`
-		CurrentHumidityValue        float32         `json:"currentHumidityValue"`
-		CurrentHumidityCaptureTime  LastCaptureTime `json:"currentHumidityCaptureTime"`
-		AverageHourHumidityValue    float32         `json:"averageHourHumidityValue"`
-		AverageDayHumidityValue     float32         `json:"averageDayHumidityValue"`
-		LastDayHumidityCaptureTime  LastDayDate     `json:"lastDayHumidityCaptureTime"`
-		LastSignalStrenghtReceived  string          `json:"lastSignalStrenghtReceived"`
+		PioneerCitizenName          string  `json:"pioneerCitizenName"`
+		PioneerCitizenNumber        uint    `json:"pioneerCitizenNumber"`
+		ProductionUnitVersion       string  `json:"productionUnitVersion"`
+		ProductionUnitType          string  `json:"productionUnitType"`
+		PicturePath                 string  `json:"picturePath"`
+		ProductionUnitOptions       string  `json:"productionUnitOptions"`
+		OnlineSinceWeeks            uint    `json:"onlineSinceWeeks"`
+		AverageMonthlyProduction    uint    `json:"averageMonthlyProduction"`
+		AverageMonthlySparedCO2     float32 `json:"averageMonthlySparedCO2"`
+		CurrentPhValue              float32 `json:"currentPhValue"`
+		CurrentPhCaptureTime        ApiTime `json:"currentPhCaptureTime"`
+		AverageHourPhValue          float32 `json:"averageHourPhValue"`
+		AverageDayPhValue           float32 `json:"averageDayPhValue"`
+		LastDayPhCaptureTime        ApiTime `json:"lastDayPhCaptureTime"`
+		CurrentWaterTempValue       float32 `json:"currentWaterTempValue"`
+		CurrentWaterTempCaptureTime ApiTime `json:"currentWaterTempCaptureTime"`
+		AverageHourWaterTempValue   float32 `json:"averageHourWaterTempValue"`
+		AverageDayWaterTempValue    float32 `json:"averageDayWaterTempValue"`
+		LastDayWaterTempCaptureTime ApiTime `json:"lastDayWaterTempCaptureTime"`
+		CurrentAirTempValue         float32 `json:"currentAirTempValue"`
+		CurrentAirTempCaptureTime   ApiTime `json:"currentAirTempCaptureTime"`
+		AverageHourAirTempValue     float32 `json:"averageHourAirTempValue"`
+		AverageDayAirTempValue      float32 `json:"averageDayAirTempValue"`
+		LastDayAirTempCaptureTime   ApiTime `json:"lastDayAirTempCaptureTime"`
+		CurrentHumidityValue        float32 `json:"currentHumidityValue"`
+		CurrentHumidityCaptureTime  ApiTime `json:"currentHumidityCaptureTime"`
+		AverageHourHumidityValue    float32 `json:"averageHourHumidityValue"`
+		AverageDayHumidityValue     float32 `json:"averageDayHumidityValue"`
+		LastDayHumidityCaptureTime  ApiTime `json:"lastDayHumidityCaptureTime"`
+		LastSignalStrenghtReceived  string  `json:"lastSignalStrenghtReceived"`
 	}
 }
 
@@ -151,37 +111,12 @@ type ProdUnitsData struct {
 	}
 }
 
-type ResultDataTime struct {
-	time.Time
-}
-
-// UnmarshalJSON decodes 0001-01-01T00:00:00 into a time.Time object
-func (p *ResultDataTime) UnmarshalJSON(bytes []byte) error {
-	var raw string
-	err := json.Unmarshal(bytes, &raw)
-	if err != nil {
-		return err
-	}
-
-	if raw == "-" {
-		return nil
-	}
-
-	t, err := time.Parse("2006-01-02T15:04:05.999999999", raw)
-	if err != nil {
-		return err
-	}
-
-	p.Time = t
-	return nil
-}
-
 type ResultData struct {
 	BaseMessage
 	Data struct {
 		ResultData []struct {
-			Value       float32        `json:"value"`
-			CaptureDate ResultDataTime `json:"captureDate"`
+			Value       float32 `json:"value"`
+			CaptureDate ApiTime `json:"captureDate"`
 		} `json:"resultData"`
 	}
 }
