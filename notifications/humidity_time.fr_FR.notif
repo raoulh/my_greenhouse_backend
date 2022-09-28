@@ -1,0 +1,1 @@
+La serre n'a pas envoyé de mise à jour de l'humidité depuis {{ .DiffTime.Hours }} heures

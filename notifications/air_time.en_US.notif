@@ -1,0 +1,1 @@
+The greenhouse did not send any air temperature updates since {{ .DiffTime.Hours }} hours

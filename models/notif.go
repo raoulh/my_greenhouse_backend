@@ -3,6 +3,7 @@ package models
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"text/template"
 	"time"
 
@@ -101,94 +102,63 @@ func (u *User) handleNotifications() {
 	for idx, meas := range u.Meas {
 		n, err := GetNotifSettings(u, NotifTypePh, meas.ProdUnitID)
 		if err == nil {
-
-			//Check out-of-range
-			if n.RangeEnabled {
-				if u.Meas[idx].PH.CurrentValue < n.RangeMin ||
-					u.Meas[idx].PH.CurrentValue > n.RangeMax {
-					n.CurrentValue = u.Meas[idx].PH.CurrentValue
-					msg := u.executeTemplate(t, "ph_range", n)
-					u.sendNotif(msg)
-				}
-			}
-
-			if n.TooFastEnabled {
-				//TODO
-			}
-
-			if n.TimeEnabled {
-				//TODO
-			}
-
+			u.doCheckNotif(&u.Meas[idx].PH, n, t, "ph_range", "ph_fast", "ph_time", 0.8)
 		}
 
 		n, err = GetNotifSettings(u, NotifTypeWaterTemp, meas.ProdUnitID)
 		if err == nil {
-
-			//Check out-of-range
-			if n.RangeEnabled {
-				if u.Meas[idx].Water.CurrentValue < n.RangeMin ||
-					u.Meas[idx].Water.CurrentValue > n.RangeMax {
-					n.CurrentValue = u.Meas[idx].Water.CurrentValue
-					msg := u.executeTemplate(t, "water_range", n)
-					u.sendNotif(msg)
-				}
-			}
-
-			if n.TooFastEnabled {
-				//TODO
-			}
-
-			if n.TimeEnabled {
-				//TODO
-			}
-
+			u.doCheckNotif(&u.Meas[idx].Water, n, t, "water_range", "water_fast", "water_time", 10)
 		}
 
 		n, err = GetNotifSettings(u, NotifTypeAirTemp, meas.ProdUnitID)
 		if err == nil {
-
-			//Check out-of-range
-			if n.RangeEnabled {
-				if u.Meas[idx].Air.CurrentValue < n.RangeMin ||
-					u.Meas[idx].Air.CurrentValue > n.RangeMax {
-					n.CurrentValue = u.Meas[idx].Air.CurrentValue
-					msg := u.executeTemplate(t, "air_range", n)
-					u.sendNotif(msg)
-				}
-			}
-
-			if n.TooFastEnabled {
-				//TODO
-			}
-
-			if n.TimeEnabled {
-				//TODO
-			}
-
+			u.doCheckNotif(&u.Meas[idx].Air, n, t, "air_range", "air_fast", "air_time", 10)
 		}
 
 		n, err = GetNotifSettings(u, NotifTypeHumidity, meas.ProdUnitID)
 		if err == nil {
+			u.doCheckNotif(&u.Meas[idx].Humidity, n, t, "humidity_range", "humidity_fast", "humidity_time", 30)
+		}
+	}
+}
 
-			//Check out-of-range
-			if n.RangeEnabled {
-				if u.Meas[idx].Humidity.CurrentValue < n.RangeMin ||
-					u.Meas[idx].Humidity.CurrentValue > n.RangeMax {
-					n.CurrentValue = u.Meas[idx].Humidity.CurrentValue
-					msg := u.executeTemplate(t, "humidity_range", n)
-					u.sendNotif(msg)
-				}
+func (u *User) doCheckNotif(meas *Measurement, n *NotifSettings, t *template.Template, rangeTpl, toofastTpl, timeTpl string, threshold float32) {
+	hasNewValue := !meas.LastCheckTime.Equal(meas.CurrentTime)
+	if hasNewValue {
+		meas.LastCheckTime = meas.CurrentTime
+	}
+
+	//Check out-of-range
+	if n.RangeEnabled &&
+		hasNewValue {
+		if meas.CurrentValue < n.RangeMin ||
+			meas.CurrentValue > n.RangeMax {
+			n.CurrentValue = meas.CurrentValue
+			msg := u.executeTemplate(t, rangeTpl, n)
+			u.sendNotif(msg)
+		}
+	}
+
+	//Check if value changes too fast
+	if n.TooFastEnabled &&
+		hasNewValue {
+		if meas.LastValue > 0 {
+			diff := meas.CurrentValue - meas.LastValue
+			if float32(math.Abs(float64(diff))) < threshold {
+				msg := u.executeTemplate(t, toofastTpl, n)
+				u.sendNotif(msg)
 			}
+		}
+		meas.LastValue = meas.CurrentValue
+	}
 
-			if n.TooFastEnabled {
-				//TODO
-			}
-
-			if n.TimeEnabled {
-				//TODO
-			}
-
+	//Check if data has not been received since duration
+	if n.TimeEnabled {
+		hoursDiff := time.Since(meas.LastCheckTime)
+		if hoursDiff.Hours() > n.MinTime.Hours() {
+			n.DiffTime = hoursDiff
+			msg := u.executeTemplate(t, timeTpl, n)
+			u.sendNotif(msg)
 		}
 	}
 }

@@ -141,6 +141,8 @@ func refreshUserData(userID uint) {
 		u.Meas[idx].Humidity.LastDayTime = prodDetail.Data.LastDayHumidityCaptureTime.Time
 	}
 
+	u.handleNotifications()
+
 	if db.Session(&gorm.Session{FullSaveAssociations: true}).Save(u).Error != nil {
 		logging.Warnf("Failed to save user data into db: %v", err)
 	}
@@ -154,6 +156,4 @@ func refreshUserData(userID uint) {
 			}
 		}
 	*/
-
-	u.handleNotifications()
 }

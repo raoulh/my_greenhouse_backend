@@ -1,0 +1,1 @@
+Water temperature value changes too fast. Current value: {{.CurrentValue}} last value: {{.LastValue}}

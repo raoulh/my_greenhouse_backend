@@ -28,11 +28,13 @@ type User struct {
 }
 
 type Measurement struct {
-	CurrentValue float32   `json:"current_value"`
-	CurrentTime  time.Time `json:"current_time"`
-	HourAverage  float32   `json:"hour_average_value"`
-	DayAverage   float32   `json:"day_average_value"`
-	LastDayTime  time.Time `json:"last_day_time"`
+	CurrentValue  float32   `json:"current_value"`
+	CurrentTime   time.Time `json:"current_time"`
+	HourAverage   float32   `json:"hour_average_value"`
+	DayAverage    float32   `json:"day_average_value"`
+	LastDayTime   time.Time `json:"last_day_time"`
+	LastCheckTime time.Time `json:"-"` //Last time we did check for notification for this measurement
+	LastValue     float32   `json:"-"` //Last value from api to compare from
 }
 
 type UnitMeasurements struct {
@@ -71,6 +73,7 @@ type NotifSettings struct {
 	TooFastEnabled bool          `json:"too_fast_enabled"`
 	TimeEnabled    bool          `json:"time_enabled"`
 	MinTime        time.Duration `json:"time_min"`
+	DiffTime       time.Duration `json:"-" gorm:"-"`
 
 	CurrentValue float32 `json:"-" gorm:"-"`
 }

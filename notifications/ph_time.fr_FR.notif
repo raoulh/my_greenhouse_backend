@@ -1,0 +1,1 @@
+La serre n'a pas envoyé de mise à jour du pH depuis {{ .DiffTime.Hours }} heures

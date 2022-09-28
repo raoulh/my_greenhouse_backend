@@ -1,0 +1,1 @@
+La température de l'eau a changé trop rapidement. Valeur actuelle: {{.CurrentValue}} dernière valeur: {{.LastValue}}

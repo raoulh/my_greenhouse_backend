@@ -1,0 +1,1 @@
+L'humidité a changé trop rapidement. Valeur actuelle: {{.CurrentValue}} dernière valeur: {{.LastValue}}
