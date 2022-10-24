@@ -107,37 +107,25 @@ func refreshUserData(userID uint) {
 		u.Meas[idx].PH.CurrentValue = prodDetail.Data.CurrentPhValue
 		u.Meas[idx].PH.DayAverage = prodDetail.Data.AverageDayPhValue
 		u.Meas[idx].PH.HourAverage = prodDetail.Data.AverageHourPhValue
-		dur := time.Duration(prodDetail.Data.CurrentPhCaptureTime.Time.Hour()*int(time.Hour) +
-			prodDetail.Data.CurrentPhCaptureTime.Time.Minute()*int(time.Minute) +
-			prodDetail.Data.CurrentPhCaptureTime.Time.Second()*int(time.Second))
-		u.Meas[idx].PH.CurrentTime = prodDetail.Data.LastDayPhCaptureTime.Time.Add(dur)
+		u.Meas[idx].PH.CurrentTime = prodDetail.Data.CurrentPhCaptureTime.Time
 		u.Meas[idx].PH.LastDayTime = prodDetail.Data.LastDayPhCaptureTime.Time
 
 		u.Meas[idx].Water.CurrentValue = prodDetail.Data.CurrentWaterTempValue
 		u.Meas[idx].Water.DayAverage = prodDetail.Data.AverageDayWaterTempValue
 		u.Meas[idx].Water.HourAverage = prodDetail.Data.AverageHourWaterTempValue
-		dur = time.Duration(prodDetail.Data.CurrentWaterTempCaptureTime.Time.Hour()*int(time.Hour) +
-			prodDetail.Data.CurrentWaterTempCaptureTime.Time.Minute()*int(time.Minute) +
-			prodDetail.Data.CurrentWaterTempCaptureTime.Time.Second()*int(time.Second))
-		u.Meas[idx].Water.CurrentTime = prodDetail.Data.LastDayWaterTempCaptureTime.Time.Add(dur)
+		u.Meas[idx].Water.CurrentTime = prodDetail.Data.CurrentWaterTempCaptureTime.Time
 		u.Meas[idx].Water.LastDayTime = prodDetail.Data.LastDayWaterTempCaptureTime.Time
 
 		u.Meas[idx].Air.CurrentValue = prodDetail.Data.CurrentAirTempValue
 		u.Meas[idx].Air.DayAverage = prodDetail.Data.AverageDayAirTempValue
 		u.Meas[idx].Air.HourAverage = prodDetail.Data.AverageHourAirTempValue
-		dur = time.Duration(prodDetail.Data.CurrentAirTempCaptureTime.Time.Hour()*int(time.Hour) +
-			prodDetail.Data.CurrentAirTempCaptureTime.Time.Minute()*int(time.Minute) +
-			prodDetail.Data.CurrentAirTempCaptureTime.Time.Second()*int(time.Second))
-		u.Meas[idx].Air.CurrentTime = prodDetail.Data.LastDayAirTempCaptureTime.Time.Add(dur)
+		u.Meas[idx].Air.CurrentTime = prodDetail.Data.CurrentAirTempCaptureTime.Time
 		u.Meas[idx].Air.LastDayTime = prodDetail.Data.LastDayAirTempCaptureTime.Time
 
 		u.Meas[idx].Humidity.CurrentValue = prodDetail.Data.CurrentHumidityValue
 		u.Meas[idx].Humidity.DayAverage = prodDetail.Data.AverageDayHumidityValue
 		u.Meas[idx].Humidity.HourAverage = prodDetail.Data.AverageHourHumidityValue
-		dur = time.Duration(prodDetail.Data.CurrentHumidityCaptureTime.Time.Hour()*int(time.Hour) +
-			prodDetail.Data.CurrentHumidityCaptureTime.Time.Minute()*int(time.Minute) +
-			prodDetail.Data.CurrentHumidityCaptureTime.Time.Second()*int(time.Second))
-		u.Meas[idx].Humidity.CurrentTime = prodDetail.Data.LastDayHumidityCaptureTime.Time.Add(dur)
+		u.Meas[idx].Humidity.CurrentTime = prodDetail.Data.CurrentHumidityCaptureTime.Time
 		u.Meas[idx].Humidity.LastDayTime = prodDetail.Data.LastDayHumidityCaptureTime.Time
 	}
 
